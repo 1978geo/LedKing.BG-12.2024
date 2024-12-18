@@ -118,7 +118,7 @@
 <!-- Horizontal Menu -->
 <div class="menu">
     <div class="menu-item active" id="menu-home">Home</div>
-    <div class="menu-item " id="menu-campaign">Кампания</div>
+    <div class="menu-item " id="menu-campaign">LED Кампания</div>
     <div class="menu-item" id="menu-buy-led">Покупка LED</div>
     <div class="menu-item" id="menu-rent-led">Наем LED</div>
     <div class="menu-item" id="menu-support-led">Поддръжка LED</div>
@@ -127,7 +127,8 @@
 <!-- Forms -->
 <div class="form-container">
     <div class="form video-container active" id="home">
-        <video autoplay loop id="home-video">
+        <video  id="home-video">
+<!--            autoplay loop-->
             <source src="static/LED KING.mp4" type="video/mp4" />
             Your browser does not support the video tag.
         </video>
@@ -137,14 +138,12 @@
         <form method="POST">
             <!-- Избор на градове за кампанията -->
             <div class="form-group">
-                <label for="campaign-city">Избор на градове за кампанията (Падащо меню):</label>
-                <select id="campaign-city" name="campaign_city" required>
-                    <option value="">-- Изберете град --</option>
-                    <option value="sofia">София</option>
-                    <option value="plovdiv">Пловдив</option>
-                    <option value="varna">Варна</option>
-                    <option value="burgas">Бургас</option>
-                </select>
+                <label for="campaign-city">Град</label>
+                <select id="campaign-city" name="campaign_city" required></select>
+            </div>
+            <div class="form-group">
+                <label for="campaign-location">Локация</label>
+                <select id="campaign-location" name="location" required></select>
             </div>
             <!-- Карта опция -->
             <div class="form-group">
@@ -162,12 +161,7 @@
             <!-- Продължителност на видео клип -->
             <div class="form-group">
                 <label for="video-duration">Продължителност на видео клип:</label>
-                <div class="checkbox-group" id="video-duration">
-<!--                    <label><input type="checkbox" name="clip_duration" value="10"> 10 сек</label>-->
-<!--                    <label><input type="checkbox" name="clip_duration" value="15"> 15 сек</label>-->
-<!--                    <label><input type="checkbox" name="clip_duration" value="20"> 20 сек</label>-->
-<!--                    <label><input type="checkbox" name="clip_duration" value="30"> 30 сек</label>-->
-                </div>
+                <select id="video-duration" name="clip_duration" required></select>
             </div>
             <!-- Нужда от помощ при изработка на видео клип -->
             <div class="form-group">
@@ -207,27 +201,20 @@
             </div>
             <!-- Опция -->
             <div class="form-group">
-                <label for="usage2">Опция:</label>
-                <select id="usage2" name="usage" required>
-                    <option value="">-- Изберете опция --</option>
-                    <option value="outdoor">LED екран за Външна употреба</option>
-                    <option value="indoor">LED екран за Вътрешна употреба</option>
-                </select>
+                <label for="usage" style="display: inline">LED екран за:</label>
+                <span>
+                    <input type="radio" id="buy-led-usage-indoors" name="usage" value="Вътрешна употреба" style="display: inline">
+                    <label for="buy-led-usage-indoors" style="display: inline">Външна употреба</label>
+                </span>
+                <span>
+                    <input type="radio" id="buy-led-usage-outdoors" name="usage" value="Външна употреба">
+                    <label for="buy-led-usage-outdoors" style="display: inline">Външна употреба</label>
+                </span>
             </div>
             <!-- Разстояние между пикселите -->
             <div class="form-group">
-                <label>Разстояние между пикселите:</label>
-                <div class="checkbox-group" id="buy-led-pixel_pitch">
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.2"> 1.2</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.5"> 1.5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.8"> 1.8</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="2"> 2</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="2.5"> 2.5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="3"> 3</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="4"> 4</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="5"> 5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="6"> 6</label>-->
-                </div>
+                <label for="buy-led-pixel_pitch">Разстояние между пикселите:</label>
+                <select id="buy-led-pixel_pitch" name="pixel_pitch" required></select>
             </div>
             <!-- Снимка на обекта -->
             <div class="form-group">
@@ -261,32 +248,29 @@
         <form method="POST">
             <!-- Град / Населено място -->
             <div class="form-group">
-                <label for="city3">Град / Населено място:</label>
-                <input type="text" id="city3" name="city" placeholder="Въведете град или населено място" required>
+                <label for="rent-led-city">Град</label>
+                <select id="rent-led-city" name="campaign_city" required></select>
+            </div>
+            <div class="form-group">
+                <label for="rent-led-location">Локация</label>
+                <select id="rent-led-location" name="location" required></select>
             </div>
             <!-- Опция -->
             <div class="form-group">
-                <label for="usage3">Опция:</label>
-                <select id="usage3" name="usage" required>
-                    <option value="">-- Изберете опция --</option>
-                    <option value="outdoor">LED екран за Външна употреба</option>
-                    <option value="indoor">LED екран за Вътрешна употреба</option>
-                </select>
+                <label for="usage" style="display: inline">LED екран за:</label>
+                <span>
+                    <input type="radio" id="rent-led-usage-indoors" name="usage" value="Вътрешна употреба" style="display: inline">
+                    <label for="rent-led-usage-indoors" style="display: inline">Външна употреба</label>
+                </span>
+                <span>
+                    <input type="radio" id="rent-led-usage-outdoors" name="usage" value="Външна употреба">
+                    <label for="rent-led-usage-outdoors" style="display: inline">Външна употреба</label>
+                </span>
             </div>
             <!-- Разстояние между пикселите -->
             <div class="form-group">
-                <label>Разстояние между пикселите:</label>
-                <div class="checkbox-group" id="rent-led-pixel_pitch">
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.2"> 1.2</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.5"> 1.5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="1.8"> 1.8</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="2"> 2</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="2.5"> 2.5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="3"> 3</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="4"> 4</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="5"> 5</label>-->
-<!--                    <label><input type="checkbox" name="pixel_pitch" value="6"> 6</label>-->
-                </div>
+                <label for="rent-led-pixel_pitch">Разстояние между пикселите:</label>
+                <select id="rent-led-pixel_pitch" name="pixel_pitch" required></select>
             </div>
             <!-- Продължителност на наема -->
             <div class="form-group">
@@ -323,17 +307,24 @@
         <form method="POST">
             <!-- Град / Населено място -->
             <div class="form-group">
-                <label for="city">Град / Населено място:</label>
-                <input type="text" id="city" name="city" placeholder="Въведете град или населено място" required>
+                <label for="support-led-city">Град</label>
+                <select id="support-led-city" name="campaign_city" required></select>
+            </div>
+            <div class="form-group">
+                <label for="support-led-location">Локация</label>
+                <select id="support-led-location" name="location" required></select>
             </div>
             <!-- Опция -->
             <div class="form-group">
-                <label for="usage">Опция:</label>
-                <select id="usage" name="usage" required>
-                    <option value="">-- Изберете опция --</option>
-                    <option value="outdoor">LED екран за Външна употреба</option>
-                    <option value="indoor">LED екран за Вътрешна употреба</option>
-                </select>
+                <label for="usage" style="display: inline">LED екран за:</label>
+                <span>
+                    <input type="radio" id="support-led-usage-indoors" name="usage" value="Вътрешна употреба" style="display: inline">
+                    <label for="support-led-usage-indoors" style="display: inline">Външна употреба</label>
+                </span>
+                <span>
+                    <input type="radio" id="support-led-usage-outdoors" name="usage" value="Външна употреба">
+                    <label for="support-led-usage-outdoors" style="display: inline">Външна употреба</label>
+                </span>
             </div>
             <!-- Продължителност на поддръжката -->
             <div class="form-group">

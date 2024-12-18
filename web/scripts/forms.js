@@ -6,6 +6,26 @@ const store = {
 }
 
 // Configure the forms
+
+registerLocationsHandler('campaign-city', 'campaign-location')
+registerLocationsHandler('rent-led-city', 'rent-led-location')
+registerLocationsHandler('support-led-city', 'support-led-location')
+
+function registerLocationsHandler(cityId, locationId) {
+    let city = document.getElementById(cityId);
+    let location = document.getElementById(locationId);
+    if (location) {
+        city.addEventListener('change', () => {
+            renderDynamicHtml(
+                loadLocationsByCity(city.value),
+                locationId,
+                '<option value="{{value0}}">{{value0}}</option>',
+                ["АДРЕСИ"]
+            );
+        })
+    }
+}
+
 const menuItems = document.querySelectorAll('.menu-item');
 const forms = document.querySelectorAll('.form');
 
@@ -25,39 +45,45 @@ menuItems.forEach(item => {
         // load the dynamic data for the form
         if (formId === 'campaign') {
             homeVideo.pause();
-            renderDynamicHtml(
+            renderDynamicSelect(
                 loadVideoDurations(),
                 'video-duration',
-                '<label><input type="checkbox" name="clip_duration" value="{{value0}}"> {{value0}} сек</label>',
                 ["Продължителност на видео клип [сек]"]
             );
-            renderDynamicHtml(
+            renderDynamicSelect(
                 loadCities(),
                 'campaign-city',
-                '<option value="{{value0}}">{{value0}}</option>',
                 ["ГРАДОВЕ"]
             );
         }
         else if (formId === 'buy-led') {
             homeVideo.pause();
-            renderDynamicHtml(
+            renderDynamicSelect(
                 loadPixels(),
                 'buy-led-pixel_pitch',
-                '<label><input type="checkbox" name="pixel_pitch" value="{{value0}}"> {{value0}} </label>',
                 ["Разстояние между пикселите"]
             );
         }
         else if (formId === 'rent-led') {
             homeVideo.pause();
-            renderDynamicHtml(
+            renderDynamicSelect(
                 loadPixels(),
                 'rent-led-pixel_pitch',
-                '<label><input type="checkbox" name="pixel_pitch" value="{{value0}}"> {{value0}} </label>',
                 ["Разстояние между пикселите"]
+            );
+            renderDynamicSelect(
+                loadCities(),
+                'rent-led-city',
+                ["ГРАДОВЕ"]
             );
         }
         else if (formId === 'support-led') {
             homeVideo.pause();
+            renderDynamicSelect(
+                loadCities(),
+                'support-led-city',
+                ["ГРАДОВЕ"]
+            );
         } else {
             homeVideo.play();
         }
@@ -126,6 +152,10 @@ async function loadLocations() {
 async function loadCities() {
     return loadLocations().then(data => uniqueItemsByField(data, "ГРАДОВЕ"));
 }
+
+async function loadLocationsByCity(city) {
+    return loadLocations().then(data => data.filter(d => d["ГРАДОВЕ"] === city ));
+}
 //loadLocations()
 //
 async function loadVideoDurations() {
@@ -151,9 +181,8 @@ const uniqueItemsByField = (array, field) => {
     });
 };
 
-//loadVideoDurations()
 async function renderDynamicHtml(dataPromise, elementId, htmlTemplate, valueKeys) {
-    dataPromise.then(data => {
+    return dataPromise.then(data => {
         let durations = document.getElementById(elementId);
         durations.innerHTML = ""
         data.forEach(d => {
@@ -168,3 +197,14 @@ async function renderDynamicHtml(dataPromise, elementId, htmlTemplate, valueKeys
         });
     })
 }
+
+async function renderDynamicSelect(dataPromise, elementId, valueKeys) {
+    let template = '<option value="{{value0}}">{{value0}}</option>'
+    return renderDynamicHtml(dataPromise, elementId, template, valueKeys)
+        .then(v => {
+            let select = document.getElementById(elementId);
+            select.value = select.options[0].value;
+            select.dispatchEvent(new Event('change'));
+        })
+}
+
