@@ -127,8 +127,8 @@
 <!-- Forms -->
 <div class="form-container">
     <div class="form video-container active" id="home">
-        <video  id="home-video">
-<!--            autoplay loop-->
+        <video  id="home-video" autoplay loop>
+<!--            -->
             <source src="static/LED KING.mp4" type="video/mp4" />
             Your browser does not support the video tag.
         </video>
@@ -196,8 +196,8 @@
         <form method="POST" enctype="multipart/form-data">
             <!-- Град / Населено място -->
             <div class="form-group">
-                <label for="city2">Град / Населено място:</label>
-                <input type="text" id="city2" name="city" placeholder="Въведете град или населено място" required>
+                <label for="buy-led-city">Град / Населено място:</label>
+                <input type="text" id="buy-led-city" name="city" placeholder="Въведете град или населено място" required>
             </div>
             <!-- Опция -->
             <div class="form-group">
@@ -248,12 +248,8 @@
         <form method="POST">
             <!-- Град / Населено място -->
             <div class="form-group">
-                <label for="rent-led-city">Град</label>
-                <select id="rent-led-city" name="campaign_city" required></select>
-            </div>
-            <div class="form-group">
-                <label for="rent-led-location">Локация</label>
-                <select id="rent-led-location" name="location" required></select>
+                <label for="rent-led-city">Град / Населено място:</label>
+                <input type="text" id="rent-led-city" name="city" placeholder="Въведете град или населено място" required>
             </div>
             <!-- Опция -->
             <div class="form-group">
@@ -307,12 +303,8 @@
         <form method="POST">
             <!-- Град / Населено място -->
             <div class="form-group">
-                <label for="support-led-city">Град</label>
-                <select id="support-led-city" name="campaign_city" required></select>
-            </div>
-            <div class="form-group">
-                <label for="support-led-location">Локация</label>
-                <select id="support-led-location" name="location" required></select>
+                <label for="support-led-city">Град / Населено място:</label>
+                <input type="text" id="support-led-city" name="city" placeholder="Въведете град или населено място" required>
             </div>
             <!-- Опция -->
             <div class="form-group">

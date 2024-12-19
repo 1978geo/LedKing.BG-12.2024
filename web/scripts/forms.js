@@ -8,8 +8,6 @@ const store = {
 // Configure the forms
 
 registerLocationsHandler('campaign-city', 'campaign-location')
-registerLocationsHandler('rent-led-city', 'rent-led-location')
-registerLocationsHandler('support-led-city', 'support-led-location')
 
 function registerLocationsHandler(cityId, locationId) {
     let city = document.getElementById(cityId);
