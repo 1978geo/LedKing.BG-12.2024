@@ -1,0 +1,17 @@
+
+# working folders
+target
+
+# testing
+
+#tools
+
+#IDEs
+.idea/
+*.iml
+nbproject
+
+# misc
+
+.project
+.settings
