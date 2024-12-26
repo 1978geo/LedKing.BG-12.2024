@@ -13,13 +13,15 @@ function registerLocationsHandler(cityId, locationId) {
     let city = document.getElementById(cityId);
     let location = document.getElementById(locationId);
     if (location) {
-        city.addEventListener('change', () => {
-            renderDynamicHtml(
-                loadLocationsByCity(city.value),
+        city.addEventListener('change', (v) => {
+            let selectedCities = v.detail.selectedOptions;
+            renderDynamicMultiSelect(
+                loadLocationsByCities(selectedCities),
                 locationId,
-                '<option value="{{value0}}">{{value0}}</option>',
-                ["АДРЕСИ"]
-            );
+                '{{value0}} - {{value1}} - {{value2}} - {{value3}} - {{value4}} - {{value5}} - {{value6}}',
+                ["ГРАДОВЕ", "АДРЕСИ", "Снимка №", "GPS координати","брой екрани","вид на екрана","размер"]
+            )
+
         })
     }
 }
@@ -48,9 +50,10 @@ menuItems.forEach(item => {
                 'video-duration',
                 ["Продължителност на видео клип [сек]"]
             );
-            renderDynamicSelect(
+            renderDynamicMultiSelect(
                 loadCities(),
                 'campaign-city',
+                '{{value0}}',
                 ["ГРАДОВЕ"]
             );
         }
@@ -154,6 +157,14 @@ async function loadCities() {
 async function loadLocationsByCity(city) {
     return loadLocations().then(data => data.filter(d => d["ГРАДОВЕ"] === city ));
 }
+async function loadLocationsByCities(cities) {
+    const citiesSet = new Set(cities);
+    return loadLocations().then(data => {
+        return data
+            .filter(d => citiesSet.has(d["ГРАДОВЕ"]) )
+        ;
+    });
+}
 //loadLocations()
 //
 async function loadVideoDurations() {
@@ -179,30 +190,44 @@ const uniqueItemsByField = (array, field) => {
     });
 };
 
-async function renderDynamicHtml(dataPromise, elementId, htmlTemplate, valueKeys) {
+async function renderDynamicHtml(dataPromise, htmlTemplate, valueKeys) {
     return dataPromise.then(data => {
-        let durations = document.getElementById(elementId);
-        durations.innerHTML = ""
+        let html = "";
         data.forEach(d => {
-            let resolvedHtml = htmlTemplate;
-            valueKeys.forEach((key, index) => {
-                let value = d[key];
-                let textKey = `{{value${index}}}`
-                resolvedHtml = resolvedHtml.replaceAll(textKey, value);
-//                console.log(textKey, value, resolvedHtml)
-            })
-            durations.innerHTML += resolvedHtml
+            html += renderTemplateItem(d, htmlTemplate, valueKeys);
         });
+        return html;
     })
+}
+
+function renderTemplateItem(dataItem, htmlTemplate, valueKeys) {
+    let resolvedHtml = htmlTemplate;
+    valueKeys.forEach((key, index) => {
+        let value = dataItem[key];
+        let textKey = `{{value${index}}}`
+        resolvedHtml = resolvedHtml.replaceAll(textKey, value);
+    })
+    return resolvedHtml;
 }
 
 async function renderDynamicSelect(dataPromise, elementId, valueKeys) {
     let template = '<option value="{{value0}}">{{value0}}</option>'
-    return renderDynamicHtml(dataPromise, elementId, template, valueKeys)
-        .then(v => {
+    return renderDynamicHtml(dataPromise, template, valueKeys)
+        .then(html => {
             let select = document.getElementById(elementId);
+            select.innerHTML = html;
             select.value = select.options[0].value;
             select.dispatchEvent(new Event('change'));
         })
+}
+
+async function renderDynamicMultiSelect(dataPromise, elementId, template, valueKeys) {
+    return dataPromise.then(data => {
+        let values = data.map(d => renderTemplateItem(d,template, valueKeys));
+        let select = document.getElementById(elementId);
+        select.list = values;
+        select.populateOptions();
+        select.render();
+    })
 }
 

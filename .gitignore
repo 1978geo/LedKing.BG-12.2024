@@ -10,7 +10,9 @@ target
 .idea/
 *.iml
 nbproject
-
+#groovy
+src/
+lib/
 # misc
 
 .project
