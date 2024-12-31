@@ -6,90 +6,135 @@ const store = {
 }
 
 // Configure the forms
+function init() {
 
-registerLocationsHandler('campaign-city', 'campaign-location')
+    registerLocationsHandler('campaign-city', 'campaign-location')
 
-function registerLocationsHandler(cityId, locationId) {
-    let city = document.getElementById(cityId);
-    let location = document.getElementById(locationId);
-    if (location) {
-        city.addEventListener('change', (v) => {
-            let selectedCities = v.detail.selectedOptions;
-            renderDynamicMultiSelect(
-                loadLocationsByCities(selectedCities),
-                locationId,
-                '{{value0}} - {{value1}} - {{value2}} - {{value3}} - {{value4}} - {{value5}} - {{value6}}',
-                ["ГРАДОВЕ", "АДРЕСИ", "Снимка №", "GPS координати","брой екрани","вид на екрана","размер"]
-            )
+    function registerLocationsHandler(cityId, locationId) {
+        let city = document.getElementById(cityId);
+        let location = document.getElementById(locationId);
+        if (location) {
+            city.addEventListener('change', (v) => {
+                let selectedCities = v.detail.selectedOptions;
+                renderDynamicMultiSelect(
+                    loadLocationsByCities(selectedCities),
+                    locationId,
+                    '{{value0}} - {{value1}} - {{value2}} - {{value3}} - {{value4}} - {{value5}} - {{value6}}',
+                    ["ГРАДОВЕ", "АДРЕСИ", "Снимка №", "GPS координати", "брой екрани", "вид на екрана", "размер"]
+                )
 
-        })
+            })
+        }
+        let locationTable = document.getElementById(locationId+"-table");
+        if (locationTable) {
+            city.addEventListener('change', (v) => {
+                let selectedCities = v.detail.selectedOptions;
+                locationTable.keys = ["ГРАДОВЕ", "АДРЕСИ", "брой екрани", "вид на екрана", "размер"];
+                loadLocationsByCities(selectedCities).then(data => {
+                    const result = [...locationTable.getSelectedRows(), ...data];
+                    locationTable.data = result
+                })
+            })
+        }
     }
+
+    const menuItems = document.querySelectorAll('.menu-item');
+    const forms = document.querySelectorAll('.form');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Remove 'active' class from all menu items and forms
+            menuItems.forEach(i => i.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+
+            // Add 'active' class to the clicked menu item and corresponding form
+            item.classList.add('active');
+            const formId = item.id.replace('menu-', '');
+            let form = document.getElementById(formId);
+            form.classList.add('active');
+
+            let homeVideo = document.getElementById("home-video");
+            // load the dynamic data for the form
+            if (formId === 'campaign') {
+                homeVideo.pause();
+                renderDynamicSelect(
+                    loadVideoDurations(),
+                    'video-duration',
+                    ["Продължителност на видео клип [сек]"]
+                );
+                renderDynamicMultiSelect(
+                    loadCities(),
+                    'campaign-city',
+                    '{{value0}}',
+                    ["ГРАДОВЕ"]
+                );
+            } else if (formId === 'buy-led') {
+                homeVideo.pause();
+                renderDynamicSelect(
+                    loadPixels(),
+                    'buy-led-pixel_pitch',
+                    ["Разстояние между пикселите"]
+                );
+            } else if (formId === 'rent-led') {
+                homeVideo.pause();
+                renderDynamicSelect(
+                    loadPixels(),
+                    'rent-led-pixel_pitch',
+                    ["Разстояние между пикселите"]
+                );
+            } else if (formId === 'support-led') {
+                homeVideo.pause();
+            } else {
+                homeVideo.play();
+            }
+        });
+    });
 }
 
-const menuItems = document.querySelectorAll('.menu-item');
-const forms = document.querySelectorAll('.form');
+async function loadStore() {
+    if (store.ledPixels.length > 0 || store.videoDurations.length > 0 || store.locations.length > 0) {
+        return Promise.resolve(store)
+    }
+    const xlsFilePromise = fetch('static/ledking.bg.xlsx');
+    const xlsLibPromise = import("https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs");
 
-menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-        // Remove 'active' class from all menu items and forms
-        menuItems.forEach(i => i.classList.remove('active'));
-        forms.forEach(f => f.classList.remove('active'));
+    const XLSX = await xlsLibPromise;
+    const xlsResp = await xlsFilePromise;
+    if (!xlsResp.ok) {
+        throw new Error('Failed to fetch the Excel file.');
+    }
+    const file = await xlsResp.arrayBuffer();
 
-        // Add 'active' class to the clicked menu item and corresponding form
-        item.classList.add('active');
-        const formId = item.id.replace('menu-', '');
-        let form = document.getElementById(formId);
-        form.classList.add('active');
+    const workbook = XLSX.read(file);  // Parse workbook using XSLX
+    // Convert to JSON
+    const jsonData = workbookToJson(workbook, XLSX);
+    store.ledPixels = jsonData.pixels;
+    store.videoDurations = jsonData.durations;
+    store.locations = jsonData.locations;
+    return store;
 
-        let homeVideo = document.getElementById("home-video");
-        // load the dynamic data for the form
-        if (formId === 'campaign') {
-            homeVideo.pause();
-            renderDynamicSelect(
-                loadVideoDurations(),
-                'video-duration',
-                ["Продължителност на видео клип [сек]"]
-            );
-            renderDynamicMultiSelect(
-                loadCities(),
-                'campaign-city',
-                '{{value0}}',
-                ["ГРАДОВЕ"]
-            );
-        }
-        else if (formId === 'buy-led') {
-            homeVideo.pause();
-            renderDynamicSelect(
-                loadPixels(),
-                'buy-led-pixel_pitch',
-                ["Разстояние между пикселите"]
-            );
-        }
-        else if (formId === 'rent-led') {
-            homeVideo.pause();
-            renderDynamicSelect(
-                loadPixels(),
-                'rent-led-pixel_pitch',
-                ["Разстояние между пикселите"]
-            );
-            renderDynamicSelect(
-                loadCities(),
-                'rent-led-city',
-                ["ГРАДОВЕ"]
-            );
-        }
-        else if (formId === 'support-led') {
-            homeVideo.pause();
-            renderDynamicSelect(
-                loadCities(),
-                'support-led-city',
-                ["ГРАДОВЕ"]
-            );
-        } else {
-            homeVideo.play();
-        }
+}
+
+/**
+* Convert all sheets in a workbook to JSON objects.
+* @param {object} workbook - The XLSX workbook object.
+* @returns {object} An object where each key is the sheet name, and the value is the JSON representation of that sheet.
+*/
+function workbookToJson(workbook, XLSX) {
+    const sheets = workbook.SheetNames; // Get sheet names
+    const jsonResult = {};
+
+    sheets.forEach(sheetName => {
+        const sheet = workbook.Sheets[sheetName];
+        // Use XLSX.utils.sheet_to_json function to parse the sheet
+        jsonResult[sheetName] = XLSX.utils.sheet_to_json(sheet, { defval: null });
+        // Setting `defval: null` ensures fields are preserved even if empty
     });
-});
+
+    return jsonResult;
+}
+
+
 
 // load the CSVs
 async function loadCSVToObject(url) {
@@ -126,28 +171,12 @@ async function loadCSVToObject(url) {
 }
 //
 async function loadPixels() {
-    if (store.ledPixels.length > 0) {
-        return Promise.resolve(store.ledPixels);
-    }
-    const urlPixels = 'static/ledking.bg-led-pixels.csv'; // Replace with the remote CSV URL
-    return loadCSVToObject(urlPixels).then(data => {
-        store.ledPixels = data;
-        console.log(data);
-        return data;
-    });
+    return loadStore().then(s => s.ledPixels);
 }
 //loadUrlPixels();
 //
 async function loadLocations() {
-    if (store.locations.length > 0) {
-        return Promise.resolve(store.locations);
-    }
-    const urlLocations = 'static/ledking.bg-locations.csv'; // Replace with the remote CSV URL
-    return loadCSVToObject(urlLocations).then(data => {
-        store.locations = data;
-        console.log(data);
-        return data;
-    });
+    return loadStore().then(s => s.locations);
 }
 
 async function loadCities() {
@@ -165,18 +194,9 @@ async function loadLocationsByCities(cities) {
         ;
     });
 }
-//loadLocations()
 //
 async function loadVideoDurations() {
-    if (store.videoDurations.length > 0) {
-        return Promise.resolve(store.videoDurations);
-    }
-    const urlVideoDurations = 'static/ledking.bg-video-durations.csv'; // Replace with the remote CSV URL
-    return loadCSVToObject(urlVideoDurations).then(data => {
-        store.videoDurations = data;
-        console.log(data);
-        return data;
-    });
+    return loadStore().then(s => s.videoDurations);
 }
 
 const uniqueItemsByField = (array, field) => {
@@ -231,3 +251,4 @@ async function renderDynamicMultiSelect(dataPromise, elementId, template, valueK
     })
 }
 
+export {init};

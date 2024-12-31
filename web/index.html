@@ -38,7 +38,7 @@
 
         .form-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 800px;
             margin: 0 auto;
             background: #fff;
             padding: 20px;
@@ -63,6 +63,8 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+        }
+        .form-group custom-table {
         }
         .form-group textarea {
             height: 80px;
@@ -130,8 +132,12 @@
 </div>
 
 <!-- Forms -->
+
 <div class="form-container">
     <div class="form video-container active" id="home">
+        <div class="form-group">
+        </div>
+
         <video  id="home-video" >
 <!--     autoplay loop       -->
             <source src="static/LED KING.mp4" type="video/mp4" />
@@ -149,6 +155,7 @@
             <div class="form-group">
                 <label for="campaign-location">Локация</label>
                 <multiselect-dropdown id="campaign-location"></multiselect-dropdown>
+                <custom-table id="campaign-location-table" max-height="200px" max-width="100%"></custom-table>
             </div>
             <!-- Карта опция -->
             <div class="form-group">
@@ -354,7 +361,12 @@
     </div>
 </div>
 
-<script src="scripts/forms.js" type="text/javascript" ></script>
+<!--<script src="scripts/forms.js" type="text/javascript" async ></script>-->
 <script src="scripts/multiselect-dropdown.js" type="text/javascript" ></script>
+<script src="scripts/table.js" type="text/javascript" ></script>
+<script type="module" >
+    import {init} from './scripts/forms.js';
+    init();
+</script>
 </body>
 </html>
