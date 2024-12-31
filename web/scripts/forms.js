@@ -5,6 +5,7 @@ const store = {
     locations: []
 }
 
+
 // Configure the forms
 function init() {
 
